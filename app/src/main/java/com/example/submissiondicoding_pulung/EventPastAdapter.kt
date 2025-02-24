@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 
 class EventPastAdapter(private val eventList: List<EventPast>) :
     RecyclerView.Adapter<EventPastAdapter.ViewHolder>() {
@@ -27,15 +28,11 @@ class EventPastAdapter(private val eventList: List<EventPast>) :
         holder.eventName.text = event.name
 
 
-        Thread {
-            try {
-                val bitmap = android.graphics.BitmapFactory.decodeStream(java.net.URL(event.imageLogo).openStream())
-                holder.itemView.post { holder.eventImage.setImageBitmap(bitmap) }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }.start()
-
+        Glide.with(holder.itemView.context)
+            .load(event.imageLogo)
+            .placeholder(R.drawable.placeholder)
+            .error(R.drawable.error_image)
+            .into(holder.eventImage)
 
         holder.itemView.setOnClickListener {
             val context = holder.itemView.context
@@ -44,7 +41,6 @@ class EventPastAdapter(private val eventList: List<EventPast>) :
             }
             context.startActivity(intent)
         }
-
     }
 
     override fun getItemCount() = eventList.size
